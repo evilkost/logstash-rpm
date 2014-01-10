@@ -35,6 +35,17 @@ function run_service() {
   logfile=$5
   verbose=$6
 
+if [ "${service}" == "combined" ]
+then
+  if [ "x$logfile" == "x" ]; then
+    exec "$JAVA" $JAVA_OPTS -jar $LOGSTASH_JAR agent $verbose -f "$config" -p "$pluginpath" -- web
+    rs=$? 
+  else
+    exec "$JAVA" $JAVA_OPTS -jar $LOGSTASH_JAR agent $verbose -f "$config" -l "$logfile" -p "$pluginpath" -- web >> $logfile 2>&1 &
+    rs=$?
+    [ $rs -eq 0 -a "x$pidfile" != "x" ] && printf '%d' $! > "$pidfile"
+  fi
+else
   if [ "x$logfile" == "x" ]; then
     exec "$JAVA" $JAVA_OPTS -jar $LOGSTASH_JAR $service $verbose -f "$config" -p "$pluginpath"
     rs=$?
@@ -43,15 +54,15 @@ function run_service() {
     rs=$?
     [ $rs -eq 0 -a "x$pidfile" != "x" ] && printf '%d' $! > "$pidfile"
   fi
-
+fi
   return $rs
 }
 
 service=$1; shift
 
-if [ "${service}" != "agent" -a "${service}" != "web" ]
+if [ "${service}" != "agent" -a "${service}" != "web" -a "${service}" != "combined" ]
 then
-  echo "ERROR: no such service \`${service}'. Available services are: agent, web"
+  echo "ERROR: no such service \`${service}'. Available services are: agent, web, combined"
   usage
   exit 99
 fi
