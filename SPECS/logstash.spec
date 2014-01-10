@@ -13,7 +13,7 @@
 %global sysconfigdir %{_sysconfdir}/sysconfig
 
 Name:           logstash
-Version:        1.3.1
+Version:        1.3.2
 Release:        1%{?dist}
 Summary:        A tool for managing events and logs
 
