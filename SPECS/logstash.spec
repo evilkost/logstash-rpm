@@ -156,6 +156,9 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{homedir}/
 
 %changelog
+* Fri Jan 10 2014 lars.francke@gmail.com 1.3.2-1
+- Update logstash to version 1.3.2 (Thanks to Brad Quellhorst)
+
 * Thu Dec 12 2013 lars.francke@gmail.com 1.3.1-1
 - Update logstash to version 1.3.1
 - Fixed Java version to 1.7 as 1.5 does not work
