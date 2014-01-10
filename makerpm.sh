@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-VERSION="1.3.1-1"
+VERSION="1.3.2-1"
 
 rpmlint SPECS/logstash.spec
 spectool -C SOURCES -g SPECS/logstash.spec
