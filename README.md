@@ -17,7 +17,7 @@ Tries to follow the [Java packaging guidelines](https://fedoraproject.org/wiki/P
 Vagrant
 -------
 
-There is a simple [Vagrantfile](http://www.vagrantup.com/) that prepares a CentOS VM with all the neccessar packages to build RPMs. This is useful if you're on a machine that doesn't have those tools preinstalled:
+There is a simple [Vagrantfile](http://www.vagrantup.com/) that prepares a CentOS VM with all the necessary packages to build RPMs. This is useful if you're on a machine that doesn't have those tools pre-installed:
 
     vagrant up
 
