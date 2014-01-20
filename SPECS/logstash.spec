@@ -13,7 +13,7 @@
 %global sysconfigdir %{_sysconfdir}/sysconfig
 
 Name:           logstash
-Version:        1.3.2
+Version:        1.3.3
 Release:        1%{?dist}
 Summary:        A tool for managing events and logs
 
@@ -156,6 +156,9 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{homedir}/
 
 %changelog
+* Mon Jan 20 2014 dmaher@mozilla.com 1.3.3.-1
+- Update logstash to version 1.3.3
+
 * Fri Jan 10 2014 lars.francke@gmail.com 1.3.2-1
 - Update logstash to version 1.3.2 (Thanks to Brad Quellhorst)
 
