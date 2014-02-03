@@ -14,7 +14,7 @@
 
 Name:           logstash
 Version:        1.3.3
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        A tool for managing events and logs
 
 Group:          System Environment/Daemons
@@ -156,6 +156,9 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{homedir}/
 
 %changelog
+* Mon Feb 03 2014 lars.francke@gmail.com 1.3.3-2
+- Start script now allows multiple server types (web & agent) at the same time (Thanks to Brad Quellhorst)
+
 * Mon Jan 20 2014 dmaher@mozilla.com 1.3.3-1
 - Update logstash to version 1.3.3
 
