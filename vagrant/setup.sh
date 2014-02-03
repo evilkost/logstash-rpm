@@ -11,7 +11,7 @@ cp -R /vagrant/* /home/vagrant/logstash
 chown -R vagrant:vagrant /home/vagrant/logstash
 
 ### sanity checking package installation (issue #15)
-declare -a packages=(epel-release rpmdevtools rpmlint mock blef)
+declare -a packages=(epel-release rpmdevtools rpmlint mock)
 declare -a missing=()
 for i in "${packages[@]}"; do
     rpm -qa | grep -q $i
