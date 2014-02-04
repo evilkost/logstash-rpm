@@ -23,7 +23,7 @@ function usage() {
   echo -e "                           \t\tIf a direcory is given instead of a file, all files in that directory will be concatonated in lexicographical order and then parsed as a single config file."
   echo -e "    -p, --pluginpath PLUGIN_PATH\tA colon-delimited path to find plugins in."
   echo -e "    -P, --pidfile PIDFILE\t\tPID file path."
-  echo -e "    -l, --logfile LOGFILE\t\tLogfile path."
+  echo -e "    -l, --logfile LOGFILE\t\tLogfile path. Providing this will automatically run Logstash in the background"
   echo -e "    -v, --verbose [info, debug]\t\tEnables more verbose logging"
 }
 
@@ -35,26 +35,47 @@ function run_service() {
   logfile=$5
   verbose=$6
 
-if [ "${service}" == "combined" ]
-then
-  if [ "x$logfile" == "x" ]; then
-    exec "$JAVA" $JAVA_OPTS -jar $LOGSTASH_JAR agent $verbose -f "$config" -p "$pluginpath" -- web
-    rs=$? 
-  else
-    exec "$JAVA" $JAVA_OPTS -jar $LOGSTASH_JAR agent $verbose -f "$config" -l "$logfile" -p "$pluginpath" -- web >> $logfile 2>&1 &
-    rs=$?
-    [ $rs -eq 0 -a "x$pidfile" != "x" ] && printf '%d' $! > "$pidfile"
+  if [ \( $service == "combined" -o $service == "agent" \) -a "x$config" == "x" ]; then
+    echo "ERROR: config file is required."
+    usage
+    exit 1
   fi
-else
-  if [ "x$logfile" == "x" ]; then
-    exec "$JAVA" $JAVA_OPTS -jar $LOGSTASH_JAR $service $verbose -f "$config" -p "$pluginpath"
-    rs=$?
-  else
-    exec "$JAVA" $JAVA_OPTS -jar $LOGSTASH_JAR $service $verbose -f "$config" -l "$logfile" -p "$pluginpath" >> $logfile 2>&1 &
-    rs=$?
-    [ $rs -eq 0 -a "x$pidfile" != "x" ] && printf '%d' $! > "$pidfile"
-  fi
-fi
+
+  case "$service" in
+    combined)
+      if [ "x$logfile" == "x" ]; then
+        exec "$JAVA" $JAVA_OPTS -jar $LOGSTASH_JAR agent $verbose -f "$config" -p "$pluginpath" -- web
+        rs=$?
+      else
+        exec "$JAVA" $JAVA_OPTS -jar $LOGSTASH_JAR agent $verbose -f "$config" -l "$logfile" -p "$pluginpath" -- web >> $logfile 2>&1 &
+        rs=$?
+        [ $rs -eq 0 -a "x$pidfile" != "x" ] && printf '%d' $! > "$pidfile"
+      fi
+      ;;
+
+    agent)
+      if [ "x$logfile" == "x" ]; then
+        exec "$JAVA" $JAVA_OPTS -jar $LOGSTASH_JAR agent $verbose -f "$config" -p "$pluginpath"
+        rs=$?
+      else
+        exec "$JAVA" $JAVA_OPTS -jar $LOGSTASH_JAR agent $verbose -f "$config" -l "$logfile" -p "$pluginpath" >> $logfile 2>&1 &
+        rs=$?
+        [ $rs -eq 0 -a "x$pidfile" != "x" ] && printf '%d' $! > "$pidfile"
+      fi
+      ;;
+
+    web)
+      if [ "x$logfile" == "x" ]; then
+        exec "$JAVA" $JAVA_OPTS -jar $LOGSTASH_JAR web
+        rs=$?
+      else
+        exec "$JAVA" $JAVA_OPTS -jar $LOGSTASH_JAR web >> $logfile 2>&1 &
+        rs=$?
+        [ $rs -eq 0 -a "x$pidfile" != "x" ] && printf '%d' $! > "$pidfile"
+      fi
+      ;;
+  esac
+
   return $rs
 }
 
@@ -117,11 +138,6 @@ do
   esac
 done
 
-if [ "x$config" == "x" ]; then
-  echo "ERROR: config file is required."
-  usage
-  exit 1
-fi
 
 run_service "$service" "$config" "$pluginpath" "$pidfile" "$logfile" "$verbose"
 

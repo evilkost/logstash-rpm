@@ -2,4 +2,9 @@
 #LOGSTASH_PATH_CONF=@@@CONFDIR@@@
 #LOGSTASH_PATH_PLUGINS=@@@PLUGINDIR@@@
 #LOGSTASH_JAVA_OPTS="-Djava.io.tmpdir=/opt/@@@NAME@@@/tmp"
+
+# This must be one of: agent, web, combined
+# * "agent" starts the Logstash agent (default)
+# * "web" starts the embedded Kibana interface
+# * "combined" starts the agent as well as the web interface
 #LOGSTASH_SERVICE="agent"
