@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-set -o nounset
-set -o errexit
 shopt -s nullglob
 
 yum install -y http://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
@@ -11,3 +9,17 @@ usermod -a -G mock vagrant
 mkdir /home/vagrant/logstash
 cp -R /vagrant/* /home/vagrant/logstash
 chown -R vagrant:vagrant /home/vagrant/logstash
+
+### sanity checking package installation (issue #15)
+declare -a packages=(epel-release rpmdevtools rpmlint mock)
+declare -a missing=()
+for i in "${packages[@]}"; do
+    rpm -qa | grep -q $i
+    if [ $? -ne 0 ]; then
+        missing=("${missing[@]}" $i)
+    fi
+done
+
+if [ ${#missing[@]} -ne 0 ]; then
+    echo "The following packages did not install: ${missing[@]}" 1>&2;
+fi
