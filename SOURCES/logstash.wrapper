@@ -9,12 +9,12 @@ else
   JAVA=`which java`
 fi
 
-#LOGSTASH_JAR="@@@JARPATH@@@/@@@NAME@@@.jar"
-#if [ ! -f $LOGSTASH_JAR ]
-#then
-#  echo "jar file is not found."
-#  exit 99
-#fi
+LOGSTASH_JAR="@@@JARPATH@@@/@@@NAME@@@.jar"
+if [ ! -f $LOGSTASH_JAR ]
+then
+  echo "jar file is not found."
+  exit 99
+fi
 
 function usage() {
   echo "Usage: ${SCRIPT} SERVICE OPTIONS"
