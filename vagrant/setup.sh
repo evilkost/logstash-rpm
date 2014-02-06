@@ -6,7 +6,7 @@ yum install -y http://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-
 yum install -y rpmdevtools rpmlint mock
 usermod -a -G mock vagrant
 
-mkdir /home/vagrant/logstash
+mkdir -p /home/vagrant/logstash
 cp -R /vagrant/* /home/vagrant/logstash
 chown -R vagrant:vagrant /home/vagrant/logstash
 
