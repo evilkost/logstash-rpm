@@ -27,7 +27,7 @@ function usage() {
   echo -e "    -p, --pluginpath PLUGIN_PATH        A colon-delimited path to find plugins in."
   echo -e "    -P, --pidfile PIDFILE               PID file path."
   echo -e "    -l, --logfile LOGFILE               Logfile path. Providing this will automatically run Logstash in the background"
-  echo -e "    -v, --verbose [info, debug]         Enables more verbose logging"
+  echo -e "    -v, --log-level LEVEL               Changes log level. Options: error, warn, info, debug (default: warn)"
 }
 
 function run_service() {
@@ -36,7 +36,7 @@ function run_service() {
   pluginpath=$3
   pidfile=$4
   logfile=$5
-  verbose=$6
+  loglevel=$6
 
   if [ \( $service == "combined" -o $service == "agent" \) -a "x$config" == "x" ]; then
     echo "ERROR: config file is required."
@@ -47,10 +47,10 @@ function run_service() {
   case "$service" in
     combined)
       if [ "x$logfile" == "x" ]; then
-        exec "$JAVA" $JAVA_OPTS -jar $LOGSTASH_JAR agent $verbose -f "$config" -p "$pluginpath" -- web
+        exec "$JAVA" $JAVA_OPTS -jar $LOGSTASH_JAR agent $loglevel -f "$config" -p "$pluginpath" -- web
         rs=$?
       else
-        exec "$JAVA" $JAVA_OPTS -jar $LOGSTASH_JAR agent $verbose -f "$config" -l "$logfile" -p "$pluginpath" -- web >> $logfile 2>&1 &
+        exec "$JAVA" $JAVA_OPTS -jar $LOGSTASH_JAR agent $loglevel -f "$config" -l "$logfile" -p "$pluginpath" -- web >> $logfile 2>&1 &
         rs=$?
         [ $rs -eq 0 -a "x$pidfile" != "x" ] && printf '%d' $! > "$pidfile"
       fi
@@ -58,10 +58,10 @@ function run_service() {
 
     agent)
       if [ "x$logfile" == "x" ]; then
-        exec "$JAVA" $JAVA_OPTS -jar $LOGSTASH_JAR agent $verbose -f "$config" -p "$pluginpath"
+        exec "$JAVA" $JAVA_OPTS -jar $LOGSTASH_JAR agent $loglevel -f "$config" -p "$pluginpath"
         rs=$?
       else
-        exec "$JAVA" $JAVA_OPTS -jar $LOGSTASH_JAR agent $verbose -f "$config" -l "$logfile" -p "$pluginpath" >> $logfile 2>&1 &
+        exec "$JAVA" $JAVA_OPTS -jar $LOGSTASH_JAR agent $loglevel -f "$config" -l "$logfile" -p "$pluginpath" >> $logfile 2>&1 &
         rs=$?
         [ $rs -eq 0 -a "x$pidfile" != "x" ] && printf '%d' $! > "$pidfile"
       fi
@@ -130,11 +130,13 @@ do
       shift 2
     ;;
 
-    -v | --verbose)
-      if [ "$2" == "debug" ]; then
-        verbose="-vv"
+    -v | --log-level)
+      if [ "$2" == "error" ]; then
+        loglevel="--quiet"
+      elif [ "$2" == "debug" ]; then
+        loglevel="--debug"
       elif [ "$2" == "info" ]; then
-        verbose="-v"
+        loglevel="--verbose"
       fi
       shift 2
     ;;
@@ -149,6 +151,6 @@ do
   esac
 done
 
-run_service "$service" "$config" "$pluginpath" "$pidfile" "$logfile" "$verbose"
+run_service "$service" "$config" "$pluginpath" "$pidfile" "$logfile" "$loglevel"
 
 exit $?

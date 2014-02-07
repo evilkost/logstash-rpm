@@ -156,8 +156,10 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{homedir}/
 
 %changelog
-* Mon Feb 03 2014 lars.francke@gmail.com 1.3.3-2
+* Mon Feb 06 2014 lars.francke@gmail.com 1.3.3-2
 - Start script now allows multiple server types (web & agent) at the same time (Thanks to Brad Quellhorst)
+- Logging can be configured via LOGSTASH_LOGLEVEL flag in /etc/sysconfig/logstash
+- Default log level changed from INFO TO WARN
 
 * Mon Jan 20 2014 dmaher@mozilla.com 1.3.3-1
 - Update logstash to version 1.3.3
