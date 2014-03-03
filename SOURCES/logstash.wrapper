@@ -28,6 +28,7 @@ function usage() {
   echo -e "    -P, --pidfile PIDFILE               PID file path."
   echo -e "    -l, --logfile LOGFILE               Logfile path. Providing this will automatically run Logstash in the background"
   echo -e "    -v, --log-level LEVEL               Changes log level. Options: error, warn, info, debug (default: warn)"
+  echo -e "    -w, --filterworkers                 Sets number of filterworkers."
 }
 
 function run_service() {
@@ -37,6 +38,7 @@ function run_service() {
   pidfile=$4
   logfile=$5
   loglevel=$6
+  workers=$7
 
   if [ \( $service == "combined" -o $service == "agent" \) -a "x$config" == "x" ]; then
     echo "ERROR: config file is required."
@@ -47,10 +49,10 @@ function run_service() {
   case "$service" in
     combined)
       if [ "x$logfile" == "x" ]; then
-        exec "$JAVA" $JAVA_OPTS -jar $LOGSTASH_JAR agent $loglevel -f "$config" -p "$pluginpath" -- web
+        exec "$JAVA" $JAVA_OPTS -jar $LOGSTASH_JAR agent $loglevel -f "$config" -p "$pluginpath" -w "$workers" -- web
         rs=$?
       else
-        exec "$JAVA" $JAVA_OPTS -jar $LOGSTASH_JAR agent $loglevel -f "$config" -l "$logfile" -p "$pluginpath" -- web >> $logfile 2>&1 &
+        exec "$JAVA" $JAVA_OPTS -jar $LOGSTASH_JAR agent $loglevel -f "$config" -l "$logfile" -p "$pluginpath" -w "$workers" -- web >> $logfile 2>&1 &
         rs=$?
         [ $rs -eq 0 -a "x$pidfile" != "x" ] && printf '%d' $! > "$pidfile"
       fi
@@ -58,10 +60,10 @@ function run_service() {
 
     agent)
       if [ "x$logfile" == "x" ]; then
-        exec "$JAVA" $JAVA_OPTS -jar $LOGSTASH_JAR agent $loglevel -f "$config" -p "$pluginpath"
+        exec "$JAVA" $JAVA_OPTS -jar $LOGSTASH_JAR agent $loglevel -f "$config" -p "$pluginpath" -w "$workers"
         rs=$?
       else
-        exec "$JAVA" $JAVA_OPTS -jar $LOGSTASH_JAR agent $loglevel -f "$config" -l "$logfile" -p "$pluginpath" >> $logfile 2>&1 &
+        exec "$JAVA" $JAVA_OPTS -jar $LOGSTASH_JAR agent $loglevel -f "$config" -l "$logfile" -p "$pluginpath" -w "$workers" >> $logfile 2>&1 &
         rs=$?
         [ $rs -eq 0 -a "x$pidfile" != "x" ] && printf '%d' $! > "$pidfile"
       fi
@@ -140,6 +142,11 @@ do
       fi
       shift 2
     ;;
+    
+    -w | --filterworkers )
+      workers="$2"
+      shift 2
+    ;;
 
     -h | --help)
       usage
@@ -151,6 +158,6 @@ do
   esac
 done
 
-run_service "$service" "$config" "$pluginpath" "$pidfile" "$logfile" "$loglevel"
+run_service "$service" "$config" "$pluginpath" "$pidfile" "$logfile" "$loglevel" "$workers"
 
 exit $?
