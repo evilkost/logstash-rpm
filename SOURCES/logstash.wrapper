@@ -9,10 +9,10 @@ else
   JAVA=`which java`
 fi
 
-LOGSTASH_JAR="@@@JARPATH@@@/@@@NAME@@@.jar"
+LOGSTASH_JAR=${LOGSTASH_JAR:-@@@JARPATH@@@/@@@NAME@@@.jar}
 if [ ! -f $LOGSTASH_JAR ]
 then
-  echo "jar file is not found."
+  echo "jar file $LOGSTASH_JAR is not found."
   exit 99
 fi
 
