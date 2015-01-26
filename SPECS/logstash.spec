@@ -13,8 +13,8 @@
 %global sysconfigdir %{_sysconfdir}/sysconfig
 
 Name:           logstash
-Version:        1.3.3
-Release:        2%{?dist}
+Version:        1.4.2
+Release:        1%{?dist}
 Summary:        A tool for managing events and logs
 
 Group:          System Environment/Daemons
@@ -56,7 +56,8 @@ rm -rf $RPM_BUILD_ROOT
 %{__mkdir} -p %{buildroot}%{plugindir}/filters
 %{__mkdir} -p %{buildroot}%{plugindir}/outputs
 # This is needed because Logstash will complain if there are no *.rb files in its Plugin directory
-/bin/echo "Dummy file due to https://logstash.jira.com/browse/LOGSTASH-1555" >  %{buildroot}%{plugindir}/inputs/dummy.rb
+# Should be fixed
+#/bin/echo "Dummy file due to https://logstash.jira.com/browse/LOGSTASH-1555" >  %{buildroot}%{plugindir}/inputs/dummy.rb
 
 # Wrapper script
 %{__mkdir} -p %{buildroot}%{_bindir}
