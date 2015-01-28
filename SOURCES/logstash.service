@@ -1,0 +1,15 @@
+[Unit]
+Description=Logstash
+BindTo=network.target
+# Requires=elasticsearch.service
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+EnvironmentFile=@@@ENVFILE@@@
+User=logstash
+Group=logstash
+Type=simple
+ExecStart=@@@LS_HOME@@@/bin/logstash agent -f @@@CONFDIR@@@ -p @@@USRSHARE@@@
+
