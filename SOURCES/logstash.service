@@ -11,5 +11,6 @@ EnvironmentFile=@@@ENVFILE@@@
 User=logstash
 Group=logstash
 Type=simple
-ExecStart=@@@LS_HOME@@@/bin/logstash agent -f @@@CONFDIR@@@ -p @@@USRSHARE@@@
+# TODO: replace with macro
+ExecStart=@@@LS_HOME@@@/bin/logstash agent -f @@@CONFDIR@@@ --pluginpath @@@USRSHARE@@@ --log /var/log/logstash/logstash.log
 

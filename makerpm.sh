@@ -2,7 +2,7 @@
 
 # ! require mock ~ 1.2+  (dnf, nspawn chroot etc)
 
-VERSION="1.4.2-1"
+VERSION="1.4.2-3"
 DIST="fc20"
 
 # rpmlint SPECS/logstash.spec

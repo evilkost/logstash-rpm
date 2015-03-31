@@ -19,7 +19,7 @@
 
 Name:           logstash
 Version:        1.4.2
-Release:        1%{?dist}
+Release:        3%{?dist}
 Summary:        A tool for managing events and logs
 
 Group:          System Environment/Daemons
@@ -40,7 +40,7 @@ AutoReqProv: no
 BuildRequires: systemd
 
 Requires: systemd
-Requires: java-1.7.0-openjdk
+Requires: java-1.8.0-openjdk
 Requires: jpackage-utils
 # Requires:       jruby # maybe later shift to version provided by distribution
 
@@ -182,6 +182,12 @@ systemctl daemon-reload
 %dir %{homedir}/
 
 %changelog
+* Tue Mar 31 2015 vgologuz@redhat.com 1.4.2-3
+- Updated logstash.service: log file should be inside /var/log/logstash/ dir
+
+* Wed Mar 18 2015 vgologuz@redhat.com 1.4.2-2
+- Requiring java 1.8, since 1.7 not available at Fedora 21
+
 * Wed Jan 28 2015 vgologuz@redhat.com 1.4.2-1
 - Updated to new upstream distribution format. Replaced sysv init script with
   systemd unit. Current RPM target: Fedora 20+.
